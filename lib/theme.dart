@@ -23,4 +23,8 @@ TextStyle purpleTextStyleMedium =
     GoogleFonts.poppins(color: purpleColor, fontWeight: FontWeight.w600);
 TextStyle purpleTextStyleRegular = GoogleFonts.poppins(color: purpleColor);
 
-double edgeLeft = 24;
+double edge = 24;
+
+String urlMap = 'https://goo.gl/maps/q1w2w4P2MRapmE287';
+// String urlPhone = 'tel:+6281223445667';
+String urlPhone = 'wqerqwru';

@@ -14,18 +14,18 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: whiteColor,
       key: key,
       body: SafeArea(
           bottom: false,
           child: ListView(
             children: [
               Padding(
-                padding:
-                    EdgeInsets.only(top: 24, left: edgeLeft, right: edgeLeft),
+                padding: EdgeInsets.only(top: 24, left: edge, right: edge),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    //* Title / Header
+                    //! Title / Header
                     Text(
                       'Explore Now',
                       style: blackTextStyleMedium.copyWith(fontSize: 24),
@@ -42,7 +42,7 @@ class HomePage extends StatelessWidget {
                       height: 30,
                     ),
 
-                    //* Popular Cities section
+                    //! Popular Cities section
                     Text(
                       'Popular Cities',
                       style: blackTextStyleRegular.copyWith(fontSize: 16),
@@ -114,7 +114,7 @@ class HomePage extends StatelessWidget {
                       width: 30,
                     ),
 
-                    //* Recommended Space section
+                    //! Recommended Space section
                     Text(
                       'Recommended Space',
                       style: blackTextStyleRegular.copyWith(fontSize: 16),
@@ -190,7 +190,7 @@ class HomePage extends StatelessWidget {
                       height: 16,
                     ),
 
-                    //* Tips & Guidance section
+                    //! Tips & Guidance section
                     TipsCard(
                       Tip(
                           idTip: 1,
@@ -210,32 +210,49 @@ class HomePage extends StatelessWidget {
                           dateUpdated: DateTime(2023, 12, 11, 0, 0)),
                       key: key,
                     ),
-                    const SizedBox(
-                      height: 50,
+                    SizedBox(
+                      height: 70 + edge,
                     ),
-
-                    //* Home Bottom Bar
-                    Container(
-                      height: 65,
-                      decoration: BoxDecoration(
-                          // color: greyBackgroundColor,
-                          color: Colors.lightGreen,
-                          borderRadius: BorderRadius.circular(23)),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          BottomNavbarItem(),
-                          BottomNavbarItem(),
-                          BottomNavbarItem(),
-                          BottomNavbarItem(),
-                        ],
-                      ),
-                    )
                   ],
                 ),
               )
             ],
           )),
+      floatingActionButton:
+          //! Home Bottom Bar
+          Container(
+        height: 65,
+        decoration: BoxDecoration(
+            color: greyBackgroundColor,
+            // color: Colors.lightGreen, // for debugging
+            borderRadius: BorderRadius.circular(23)),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            BottomNavbarItem(
+              imageUrl: 'assets/images/icon_home_solid.png',
+              isActive: true,
+              key: key,
+            ),
+            BottomNavbarItem(
+              imageUrl: 'assets/images/icon_mail_solid.png',
+              isActive: false,
+              key: key,
+            ),
+            BottomNavbarItem(
+              imageUrl: 'assets/images/icon_card_solid.png',
+              isActive: false,
+              key: key,
+            ),
+            BottomNavbarItem(
+              imageUrl: 'assets/images/icon_love_solid.png',
+              isActive: false,
+              key: key,
+            ),
+          ],
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }
