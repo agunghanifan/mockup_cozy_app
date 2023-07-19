@@ -1,18 +1,24 @@
 import "package:flutter/material.dart";
 import "package:mockup_cozy_app/models/city.dart";
-import "package:mockup_cozy_app/models/space.dart";
 import "package:mockup_cozy_app/models/tip.dart";
+import "package:mockup_cozy_app/providers/space_provider.dart";
 import "package:mockup_cozy_app/theme.dart";
 import "package:mockup_cozy_app/widgets/bottom_navbar_item.dart";
 import "package:mockup_cozy_app/widgets/city_card.dart";
-import "package:mockup_cozy_app/widgets/space_card.dart";
 import "package:mockup_cozy_app/widgets/tips_card.dart";
+import "package:provider/provider.dart";
+
+import "../models/space.dart";
+import "../widgets/space_card.dart";
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    var spaceProvider = Provider.of<SpaceProvider>(context);
+    // spaceProvider.getRecommendedSpaces(); // for debugging check data
+
     return Scaffold(
       backgroundColor: whiteColor,
       key: key,
@@ -111,7 +117,7 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(
-                      width: 30,
+                      height: 30,
                     ),
 
                     //! Recommended Space section
@@ -122,65 +128,21 @@ class HomePage extends StatelessWidget {
                     const SizedBox(
                       height: 16,
                     ),
-                    Column(
-                      children: [
-                        SpaceCard(
-                          Space(
-                              idSpace: 1,
-                              spaceName: 'Kuretakoso Hott',
-                              price: 52,
-                              location: 'Bandung, Germany',
-                              imageUrl: 'assets/images/home_1.png',
-                              rating: 4),
-                          key: key,
-                        ),
-                        const SizedBox(
-                          height: 30,
-                        ),
-                        SpaceCard(
-                          Space(
-                              idSpace: 2,
-                              spaceName: 'Roemah Kakek',
-                              price: 12,
-                              location: 'Seattle, Bogor',
-                              imageUrl: 'assets/images/home_2.png',
-                              rating: 5),
-                          key: key,
-                        ),
-                        const SizedBox(
-                          height: 30,
-                        ),
-                        SpaceCard(Space(
-                            idSpace: 3,
-                            spaceName: 'How Darling',
-                            price: 20,
-                            location: 'Jakarta, Indonesia',
-                            imageUrl: 'assets/images/home_3.png',
-                            rating: 3)),
-                        const SizedBox(
-                          height: 30,
-                        ),
-                        SpaceCard(Space(
-                            idSpace: 4,
-                            spaceName: 'Orang Crown',
-                            price: 522,
-                            location: 'Halla, Sumatra',
-                            imageUrl: 'assets/images/home_4.png',
-                            rating: 5)),
-                        const SizedBox(
-                          height: 30,
-                        ),
-                        SpaceCard(Space(
-                            idSpace: 5,
-                            spaceName: 'City of Status',
-                            price: 20,
-                            location: 'Jakarta, Indonesia',
-                            imageUrl: 'assets/images/home_5.png',
-                            rating: 3))
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 30,
+                    FutureBuilder<List<Space>>(
+                      future: spaceProvider.getRecommendedSpaces(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return Column(
+                            children: snapshot.data!
+                                .map((item) => SpaceCard(item))
+                                .toList(),
+                          );
+                        } else {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                      },
                     ),
                     Text(
                       'Tips & Guidance',

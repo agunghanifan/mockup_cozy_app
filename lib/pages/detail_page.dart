@@ -1,21 +1,24 @@
 import "package:flutter/material.dart";
 import "package:mockup_cozy_app/theme.dart";
 import "package:mockup_cozy_app/widgets/facility_item.dart";
+import "package:mockup_cozy_app/widgets/rating_item.dart";
 import "package:url_launcher/url_launcher.dart";
 
+import "../models/space.dart";
 import "../services/custom_handling_error.dart";
 
 class DetailPage extends StatelessWidget {
-  final Uri _urlMap = Uri.parse(urlMap);
-  final Uri _urlPhone = Uri.parse(urlPhone);
+  final Space space;
 
-  DetailPage({super.key});
+  const DetailPage({required this.space, super.key});
 
   @override
   Widget build(BuildContext context) {
-    launchUrlCostum(url) {
+    launchUrlCostum(Uri url) {
       canLaunchUrl(url).then((value) => {
-            if (!value)
+            if (value)
+              {launchUrl(url)}
+            else
               {const CustomHandlingError().pushToNotFoundPage(context)}
           });
     }
@@ -28,8 +31,8 @@ class DetailPage extends StatelessWidget {
           key: key,
           children: [
             //! Big Image
-            Image.asset(
-              'assets/images/pic.png',
+            Image.network(
+              space.imageUrl,
               width: MediaQuery.of(context).size.width,
               height: 350,
               fit: BoxFit.cover,
@@ -52,72 +55,51 @@ class DetailPage extends StatelessWidget {
                           const BorderRadius.vertical(top: Radius.circular(20)),
                       color: whiteColor),
                   child: Padding(
-                    padding: EdgeInsets.only(top: 30, left: edge, right: edge),
+                    padding: EdgeInsets.only(top: 30, left: edge),
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           //! Title Card with star
-                          Row(children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Kuretakeso Hott',
-                                  style: blackTextStyleMedium.copyWith(
-                                      fontSize: 22),
-                                ),
-                                Text.rich(TextSpan(
-                                    text: '\$52',
-                                    style: purpleTextStyleMedium.copyWith(
-                                        fontSize: 16),
-                                    children: [
-                                      TextSpan(
-                                          text: ' / month',
-                                          style: greyTextStyleRegular.copyWith(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w300))
-                                    ])),
-                              ],
-                            ),
-                            const Spacer(),
-                            Row(
-                              children: [
-                                Image.asset(
-                                  'assets/images/star_orange.png',
-                                  width: 20,
-                                ),
-                                const SizedBox(
-                                  width: 2,
-                                ),
-                                Image.asset(
-                                  'assets/images/star_orange.png',
-                                  width: 20,
-                                ),
-                                const SizedBox(
-                                  width: 2,
-                                ),
-                                Image.asset(
-                                  'assets/images/star_orange.png',
-                                  width: 20,
-                                ),
-                                const SizedBox(
-                                  width: 2,
-                                ),
-                                Image.asset(
-                                  'assets/images/star_orange.png',
-                                  width: 20,
-                                ),
-                                const SizedBox(
-                                  width: 2,
-                                ),
-                                Image.asset(
-                                  'assets/images/star_orange.png',
-                                  width: 20,
-                                  color: const Color(0xff989BA1),
-                                ),
-                              ],
-                            )
-                          ]),
+                          Padding(
+                            padding: EdgeInsets.only(right: edge),
+                            child: Row(children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    space.name,
+                                    style: blackTextStyleMedium.copyWith(
+                                        fontSize: 22),
+                                  ),
+                                  Text.rich(TextSpan(
+                                      text: '\$${space.price}',
+                                      style: purpleTextStyleMedium.copyWith(
+                                          fontSize: 16),
+                                      children: [
+                                        TextSpan(
+                                            text: ' / month',
+                                            style:
+                                                greyTextStyleRegular.copyWith(
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.w300))
+                                      ])),
+                                ],
+                              ),
+                              const Spacer(),
+                              Row(
+                                children: [0, 1, 2, 3, 4]
+                                    .map((item) => Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 2),
+                                          child: RatingItem(
+                                              index: item,
+                                              rating: space.rating),
+                                        ))
+                                    .toList(),
+                              )
+                            ]),
+                          ),
                           const SizedBox(
                             height: 30,
                           ),
@@ -134,26 +116,31 @@ class DetailPage extends StatelessWidget {
                               const SizedBox(
                                 height: 12,
                               ),
-                              const Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  FacilityItem(
-                                    imageUrl: 'assets/images/icon_kitchen.png',
-                                    valueOfFacility: 2,
-                                    nameFacility: 'kitchen',
-                                  ),
-                                  FacilityItem(
-                                    imageUrl: 'assets/images/icon_bed.png',
-                                    valueOfFacility: 3,
-                                    nameFacility: 'bedroom',
-                                  ),
-                                  FacilityItem(
-                                    imageUrl: 'assets/images/icon_wardrobe.png',
-                                    valueOfFacility: 3,
-                                    nameFacility: 'Big Lemari',
-                                  ),
-                                ],
+                              Padding(
+                                padding: EdgeInsets.only(right: edge),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    FacilityItem(
+                                      imageUrl:
+                                          'assets/images/icon_kitchen.png',
+                                      valueOfFacility: space.numberOfKitchens,
+                                      nameFacility: 'kitchen',
+                                    ),
+                                    FacilityItem(
+                                      imageUrl: 'assets/images/icon_bed.png',
+                                      valueOfFacility: space.numberOfBedrooms,
+                                      nameFacility: 'bedroom',
+                                    ),
+                                    FacilityItem(
+                                      imageUrl:
+                                          'assets/images/icon_wardrobe.png',
+                                      valueOfFacility: space.numberOfCupboards,
+                                      nameFacility: 'Big Lemari',
+                                    ),
+                                  ],
+                                ),
                               )
                             ],
                           ),
@@ -176,35 +163,28 @@ class DetailPage extends StatelessWidget {
                               SizedBox(
                                 height: 88,
                                 child: ListView(
-                                  scrollDirection: Axis.horizontal,
-                                  children: [
-                                    Image.asset(
-                                      'assets/images/details_galery_1.png',
-                                      width: 110,
-                                      fit: BoxFit.fill,
-                                    ),
-                                    const SizedBox(
-                                      width: 18,
-                                    ),
-                                    Image.asset(
-                                        'assets/images/details_galery_2.png'),
-                                    const SizedBox(
-                                      width: 18,
-                                    ),
-                                    Image.asset(
-                                        'assets/images/details_galery_3.png'),
-                                    const SizedBox(
-                                      width: 18,
-                                    ),
-                                    Image.asset(
-                                        'assets/images/details_galery_4.png'),
-                                    const SizedBox(
-                                      width: 18,
-                                    ),
-                                    Image.asset(
-                                        'assets/images/details_galery_5.png'),
-                                  ],
-                                ),
+                                    scrollDirection: Axis.horizontal,
+                                    children: space.photos
+                                        .map(
+                                          (item) => Container(
+                                            margin: const EdgeInsets.only(
+                                                right: 18),
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(16),
+                                              child: Image.network(
+                                                item,
+                                                width: 110,
+                                                fit: BoxFit.fill,
+                                                errorBuilder: (context, error,
+                                                    stackTrace) {
+                                                  return Container();
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                        .toList()),
                               )
                             ],
                           ),
@@ -213,66 +193,72 @@ class DetailPage extends StatelessWidget {
                           ),
 
                           //! Location
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Location',
-                                style: blackTextStyleRegular.copyWith(
-                                    fontSize: 16),
-                              ),
-                              const SizedBox(
-                                height: 6,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'Jln. Kappan Sukses No. 20\nPalembang',
-                                    style: greyTextStyleRegular.copyWith(
-                                        fontSize: 14),
-                                  ),
-                                  InkWell(
-                                    onTap: () async {
-                                      launchUrlCostum(_urlMap);
-                                    },
-                                    child: Image.asset(
-                                      'assets/images/icon_map.png',
-                                      height: 40,
+                          Padding(
+                            padding: EdgeInsets.only(right: edge),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Location',
+                                  style: blackTextStyleRegular.copyWith(
+                                      fontSize: 16),
+                                ),
+                                const SizedBox(
+                                  height: 6,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      '${space.address}\n${space.city}',
+                                      style: greyTextStyleRegular.copyWith(
+                                          fontSize: 14),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 40,
-                              ),
+                                    InkWell(
+                                      onTap: () async {
+                                        launchUrlCostum(
+                                            Uri.parse(space.mapUrl));
+                                      },
+                                      child: Image.asset(
+                                        'assets/images/icon_map.png',
+                                        height: 40,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 40,
+                                ),
 
-                              //! Button Book Now
-                              SizedBox(
-                                  height: 50,
-                                  width: MediaQuery.of(context).size.width,
-                                  child: ElevatedButton(
-                                    onPressed: () async {
-                                      //* for negative case, to 404 page
-                                      launchUrlCostum(_urlPhone);
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: purpleColor,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(17)),
-                                    ),
-                                    child: Text(
-                                      'Book Now',
-                                      style: whiteTextStyleMedium.copyWith(
-                                          fontSize: 18),
-                                    ),
-                                  )),
-                              const SizedBox(
-                                height: 40,
-                              )
-                            ],
+                                //! Button Book Now
+                                SizedBox(
+                                    height: 50,
+                                    width: MediaQuery.of(context).size.width,
+                                    child: ElevatedButton(
+                                      onPressed: () async {
+                                        //* for negative case, to 404 page
+                                        // launchUrlCostum(_urlPhone);
+                                        launchUrlCostum(
+                                            Uri.parse('tel:+${space.phone}'));
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: purpleColor,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(17)),
+                                      ),
+                                      child: Text(
+                                        'Book Now',
+                                        style: whiteTextStyleMedium.copyWith(
+                                            fontSize: 18),
+                                      ),
+                                    )),
+                                const SizedBox(
+                                  height: 40,
+                                )
+                              ],
+                            ),
                           )
                         ]),
                   ),

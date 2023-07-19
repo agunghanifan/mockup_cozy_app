@@ -28,3 +28,4 @@ double edge = 24;
 String urlMap = 'https://goo.gl/maps/q1w2w4P2MRapmE287';
 // String urlPhone = 'tel:+6281223445667';
 String urlPhone = 'wqerqwru';
+String urlSpaceAPI = 'https://bwa-cozy-api.vercel.app/recommended-spaces';
