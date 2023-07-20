@@ -7,10 +7,17 @@ import "package:url_launcher/url_launcher.dart";
 import "../models/space.dart";
 import "../services/custom_handling_error.dart";
 
-class DetailPage extends StatelessWidget {
+class DetailPage extends StatefulWidget {
   final Space space;
 
   const DetailPage({required this.space, super.key});
+
+  @override
+  State<DetailPage> createState() => _DetailPageState();
+}
+
+class _DetailPageState extends State<DetailPage> {
+  bool _isFavourite = false;
 
   @override
   Widget build(BuildContext context) {
@@ -28,11 +35,11 @@ class DetailPage extends StatelessWidget {
       body: SafeArea(
         bottom: false,
         child: Stack(
-          key: key,
+          key: widget.key,
           children: [
             //! Big Image
             Image.network(
-              space.imageUrl,
+              widget.space.imageUrl,
               width: MediaQuery.of(context).size.width,
               height: 350,
               fit: BoxFit.cover,
@@ -48,7 +55,7 @@ class DetailPage extends StatelessWidget {
                   height: 328,
                 ),
                 Container(
-                  key: key,
+                  key: widget.key,
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
                       borderRadius:
@@ -67,12 +74,12 @@ class DetailPage extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    space.name,
+                                    widget.space.name,
                                     style: blackTextStyleMedium.copyWith(
                                         fontSize: 22),
                                   ),
                                   Text.rich(TextSpan(
-                                      text: '\$${space.price}',
+                                      text: '\$${widget.space.price}',
                                       style: purpleTextStyleMedium.copyWith(
                                           fontSize: 16),
                                       children: [
@@ -94,7 +101,7 @@ class DetailPage extends StatelessWidget {
                                               const EdgeInsets.only(left: 2),
                                           child: RatingItem(
                                               index: item,
-                                              rating: space.rating),
+                                              rating: widget.space.rating),
                                         ))
                                     .toList(),
                               )
@@ -125,18 +132,21 @@ class DetailPage extends StatelessWidget {
                                     FacilityItem(
                                       imageUrl:
                                           'assets/images/icon_kitchen.png',
-                                      valueOfFacility: space.numberOfKitchens,
+                                      valueOfFacility:
+                                          widget.space.numberOfKitchens,
                                       nameFacility: 'kitchen',
                                     ),
                                     FacilityItem(
                                       imageUrl: 'assets/images/icon_bed.png',
-                                      valueOfFacility: space.numberOfBedrooms,
+                                      valueOfFacility:
+                                          widget.space.numberOfBedrooms,
                                       nameFacility: 'bedroom',
                                     ),
                                     FacilityItem(
                                       imageUrl:
                                           'assets/images/icon_wardrobe.png',
-                                      valueOfFacility: space.numberOfCupboards,
+                                      valueOfFacility:
+                                          widget.space.numberOfCupboards,
                                       nameFacility: 'Big Lemari',
                                     ),
                                   ],
@@ -164,7 +174,7 @@ class DetailPage extends StatelessWidget {
                                 height: 88,
                                 child: ListView(
                                     scrollDirection: Axis.horizontal,
-                                    children: space.photos
+                                    children: widget.space.photos
                                         .map(
                                           (item) => Container(
                                             margin: const EdgeInsets.only(
@@ -211,14 +221,14 @@ class DetailPage extends StatelessWidget {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      '${space.address}\n${space.city}',
+                                      '${widget.space.address}\n${widget.space.city}',
                                       style: greyTextStyleRegular.copyWith(
                                           fontSize: 14),
                                     ),
                                     InkWell(
                                       onTap: () async {
                                         launchUrlCostum(
-                                            Uri.parse(space.mapUrl));
+                                            Uri.parse(widget.space.mapUrl));
                                       },
                                       child: Image.asset(
                                         'assets/images/icon_map.png',
@@ -236,12 +246,33 @@ class DetailPage extends StatelessWidget {
                                     height: 50,
                                     width: MediaQuery.of(context).size.width,
                                     child: ElevatedButton(
-                                      onPressed: () async {
-                                        //* for negative case, to 404 page
-                                        // launchUrlCostum(_urlPhone);
-                                        launchUrlCostum(
-                                            Uri.parse('tel:+${space.phone}'));
-                                      },
+                                      onPressed: () => showDialog(
+                                          context: context,
+                                          builder: ((BuildContext context) =>
+                                              AlertDialog(
+                                                key: widget.key,
+                                                title: const Text('Alert'),
+                                                content: const Text(
+                                                    'Are you sure to contact the owner directly ?'),
+                                                actions: [
+                                                  TextButton(
+                                                      onPressed: () =>
+                                                          Navigator.pop(context,
+                                                              'Cancel'),
+                                                      child:
+                                                          const Text('Cancel')),
+                                                  TextButton(
+                                                      onPressed: () {
+                                                        //* for negative case, to 404 page
+                                                        // launchUrlCostum(_urlPhone);
+                                                        launchUrlCostum(Uri.parse(
+                                                            'tel:+${widget.space.phone}'));
+                                                        Navigator.pop(
+                                                            context, 'Cancel');
+                                                      },
+                                                      child: const Text('Ok'))
+                                                ],
+                                              ))),
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: purpleColor,
                                         shape: RoundedRectangleBorder(
@@ -281,7 +312,18 @@ class DetailPage extends StatelessWidget {
                       height: 40,
                     ),
                   ),
-                  Image.asset('assets/images/btn_wishlist.png', height: 40),
+                  InkWell(
+                    onTap: () {
+                      setState(() {
+                        _isFavourite = !_isFavourite;
+                      });
+                    },
+                    child: Image.asset(
+                        _isFavourite
+                            ? 'assets/images/btn_wishlist_red.png'
+                            : 'assets/images/btn_wishlist.png',
+                        height: 40),
+                  ),
                 ],
               ),
             ),
